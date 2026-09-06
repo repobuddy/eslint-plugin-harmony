@@ -79,3 +79,77 @@ Node it throws `ERR_REQUIRE_ESM`. Prefer an `eslint.config.mjs` with
   the `ts-*` configs need it; `harmony/recommended` on plain JavaScript does not.
   The range is unchanged (`>= 6.0.0`), and the `ts-*` configs are verified
   against v6 through v8.
+
+## typescript-eslint v8
+
+`@typescript-eslint/parser` (a real dependency of this package) and the
+`@typescript-eslint/eslint-plugin` this repo tests against both move to `^8`.
+The `@typescript-eslint/eslint-plugin` peer range is unchanged (`>= 6.0.0`), so
+nothing forces you off v6 or v7.
+
+### Why the parser bump matters
+
+`@typescript-eslint/parser@^6` cannot run on ESLint 10 — it throws
+`scopeManager.addGlobals is not a function`. eslintrc consumers resolve the
+parser named in `style-parts/ts-common.json` from *this* package, so the pinned
+v6 was theirs whether they wanted it or not. v8's parser is verified working on
+ESLint 8.57.1, 9.39.5 and 10.10.0.
+
+### Rule changes
+
+Only one rule entry was added, and it is additive — an `off` for a rule id that
+does not exist in v6 or v7 is a no-op there, so resolved severities on those
+versions are unchanged:
+
+- `@typescript-eslint/no-empty-object-type: "off"` in `ts-common`, beside the
+  existing `@typescript-eslint/no-empty-interface: "off"`. v8 dropped
+  `no-empty-interface` from `plugin:@typescript-eslint/recommended` and replaced
+  it with `no-empty-object-type` (which also absorbed part of the removed
+  `ban-types`). Without the new entry, this package's long-standing decision that
+  empty interfaces are allowed — they carry contextual meaning and leave room to
+  extend without a breaking change — was silently lost on v8. Note the
+  replacement is broader than what it replaces: `{}` as a type annotation is now
+  allowed too, because the rule is off rather than narrowed.
+
+Two entries in `ts-common` are now inert rather than wrong, and are kept for v6
+and v7 consumers:
+
+- `@typescript-eslint/indent: "off"` and
+  `@typescript-eslint/member-delimiter-style: "off"`. Both rules were moved out
+  of typescript-eslint into `@stylistic` and no longer exist in v8. ESLint
+  ignores an unknown rule set to severity `0`, so they stay harmless. They are
+  *not* re-expressed as `@stylistic/*` entries: this package does not depend on
+  `@stylistic/eslint-plugin`, and in flat config a rule from an unregistered
+  plugin is a hard config error even at severity `off`.
+
+Everything else `ts-common` and the `ts-recommended*` configs name still exists
+in v8: `ban-ts-comment`, `explicit-function-return-type`,
+`explicit-module-boundary-types`, `no-empty-function`, `no-explicit-any`,
+`no-namespace`, `no-non-null-assertion`, `no-unused-vars`, `no-use-before-define`,
+`no-unsafe-argument`, `no-unsafe-member-access`.
+
+### What v8 turns on that this package does not turn off
+
+The `ts-*` configs extend `plugin:@typescript-eslint/recommended` and
+`plugin:@typescript-eslint/recommended-requiring-type-checking` by name, so they
+follow whichever typescript-eslint version *you* install. Moving to v8 therefore
+brings its enlarged recommended set with it: `no-unused-expressions`,
+`no-require-imports`, `no-unsafe-function-type`, `no-wrapper-object-types`,
+`no-duplicate-enum-values`, `no-unsafe-declaration-merging` and
+`no-unnecessary-type-constraint`, plus the type-checked additions
+(`only-throw-error`, `prefer-promise-reject-errors`, `no-unsafe-unary-minus`,
+`no-array-delete`, and others). This package makes no judgement on those; turn
+off what you do not want.
+
+`plugin:@typescript-eslint/recommended-requiring-type-checking`, which
+`ts-recommended-type-check` and its siblings extend, is a deprecated alias for
+`recommended-type-checked` in v8. It still resolves, but expect it to go in
+typescript-eslint v9.
+
+### Flat `ts-*` configs still set no parser
+
+Unchanged, and deliberately so: the flat `ts-*` configs register neither
+`@typescript-eslint` nor a parser, so you compose `typescript-eslint`'s own
+configs before them. Registering a parser or plugin instance here would fight the
+one you install — `Cannot redefine plugin` — and would pin the parser this
+package happens to depend on over yours.
