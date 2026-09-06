@@ -1,0 +1,7 @@
+{
+  "acknowledgedDependencies": {
+    "eslint-plugin-harmony": {
+      "@typescript-eslint/utils": "Replaces @typescript-eslint/experimental-utils, which its own maintainers deprecated and renamed. Same publisher, same role: ESLintUtils.RuleCreator, used at runtime by src/utils/createRule.ts for the ts-member-delimiter-style rule. Pinned to ^8 to line up with the parser and the eslint-plugin peer."
+    }
+  }
+}
