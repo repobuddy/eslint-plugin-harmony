@@ -22,7 +22,16 @@
 	},
 	"license": "MIT",
 	"author": "Unional",
+	"type": "module",
 	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./lib/index.d.ts",
+			"default": "./lib/index.js"
+		},
+		"./package.json": "./package.json"
+	},
 	"files": [
 		"lib",
 		"ide-configs"
@@ -65,7 +74,7 @@
 	},
 	"peerDependencies": {
 		"@typescript-eslint/eslint-plugin": ">= 6.0.0",
-		"eslint": ">=8.4.0",
+		"eslint": ">=8.57.0",
 		"eslint-config-prettier": ">= 9.0.0"
 	},
 	"peerDependenciesMeta": {
@@ -73,5 +82,8 @@
 			"optional": true
 		}
 	},
-	"packageManager": "pnpm@11.25.0"
+	"packageManager": "pnpm@11.25.0",
+	"engines": {
+		"node": "^20.19.0 || ^22.13.0 || >=24"
+	}
 }

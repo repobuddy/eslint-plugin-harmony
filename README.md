@@ -30,94 +30,146 @@ here are the principles that they all follow:
 - phpStorm (2017.3.4): <https://www.jetbrains.com/phpstorm/>
 - Atom (1.24.0): <https://atom.io/>
 
+## Requirements
+
+- Node.js `^20.19.0 || ^22.13.0 || >=24` — this package is ESM only
+- ESLint `>=8.57.0`
+
 ## Installation
 
-You'll first need to install [ESLint](http://eslint.org):
-
 ```sh
-npm install --save-dev eslint
+npm install --save-dev eslint eslint-plugin-harmony
 ```
-
-Next, install `eslint-plugin-harmony`:
-
-```sh
-npm install --save-dev eslint-plugin-harmony
-```
-
-**Note:** If you installed ESLint globally (using the `-g` flag) then you must also install `eslint-plugin-harmony` globally.
 
 ## Usage
 
-To use the ESLint style, extends from one of the following:
+`eslint.config.js` (flat config) is the supported way to use this package on every
+ESLint version it supports:
 
 ```js
-{
-  "extends": "plugin:harmony/recommended",
-  "extends": "plugin:harmony/latest",
-  "extends": "plugin:harmony/es5",
-  "extends": "plugin:harmony/es5-strict",
-  "extends": "plugin:harmony/ts-prettier", // experimental
-  "extends": "plugin:harmony/ts-recommended", // or use overrides
-  "extends": "plugin:harmony/ts-recommended-type-check", // or use overrides
-  "extends": "plugin:harmony/ts-recommended-cra",
-  "extends": "plugin:harmony/ts-recommended-type-check-cra",
-}
+import { defineConfig } from 'eslint/config'
+import harmony from 'eslint-plugin-harmony'
+
+export default defineConfig([
+  { files: ['**/*.js'], plugins: { harmony }, extends: ['harmony/recommended'] }
+])
 ```
+
+`extends: ['harmony/<name>']` needs ESLint 9.23 or later, which falls back to the
+`flat/<name>` entry of the plugin. On ESLint 8 and 9.22 and earlier, spread the
+config instead — this works on every version:
+
+```js
+import harmony from 'eslint-plugin-harmony'
+
+export default [...harmony.configs['flat/recommended']]
+```
+
+### The configs
+
+| `extends` name | spread name | notes |
+| --- | --- | --- |
+| `harmony/recommended` | `harmony.configs['flat/recommended']` | the JavaScript style |
+| `harmony/latest` | `harmony.configs['flat/latest']` | `recommended` without the indentation rule |
+| `harmony/es5` | `harmony.configs['flat/es5']` | pins the language to ES5 |
+| `harmony/es5-strict` | `harmony.configs['flat/es5-strict']` | ES5, plus `semi` and no trailing commas |
+| `harmony/ts-recommended` | `harmony.configs['flat/ts-recommended']` | TypeScript |
+| `harmony/ts-recommended-type-check` | `harmony.configs['flat/ts-recommended-type-check']` | TypeScript, type-aware rules |
+| `harmony/ts-recommended-requiring-type-checking` | … | same, older name |
+| `harmony/ts-recommended-cra` | … | Create React App variant |
+| `harmony/ts-recommended-type-check-cra` | … | Create React App variant |
+| `harmony/ts-prettier` | `harmony.configs['flat/ts-prettier']` | experimental; pair with `eslint-config-prettier` |
+
+### These configs are overlays
+
+The eslintrc configs pull in `eslint:recommended`, `plugin:@typescript-eslint/*`
+and `prettier` by name. Flat config has no string `extends`, so the flat configs
+carry only the rules harmony itself sets and you compose the bases yourself —
+harmony last, so its style wins:
+
+```js
+import { defineConfig } from 'eslint/config'
+import js from '@eslint/js'
+import harmony from 'eslint-plugin-harmony'
+
+export default defineConfig([
+  js.configs.recommended,
+  { files: ['**/*.js'], plugins: { harmony }, extends: ['harmony/recommended'] }
+])
+```
+
+Two other deliberate differences from the eslintrc twins:
+
+- The `ts-*` flat configs apply to `**/*.{ts,tsx,mts,cts}` on their own. eslintrc
+  left that to your `overrides.files`.
+- No `ecmaVersion` is pinned, except in `es5` and `es5-strict` where it is the
+  point. The eslintrc configs pinned ES2018/ES2019, which in flat config would
+  win over yours and turn `a?.b` into a parsing error.
 
 ### TypeScript
 
-The TypeScript style is extended from [`@typescript-eslint/eslint-plugin`](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin).
-
-They are adjusted to the style in harmony.
-Also, the configuration are simplified.
-
-Since you will likely to have some JavaScript files in your TypeScript project (e.g. `jest.config.js`, `webpack.config.js`, etc.),
-it is recommended to use the `overrides.extends` feature in `eslint` to support mixed environment:
+The `ts-*` flat configs set `@typescript-eslint/*` rules but do not register the
+plugin or the parser — pinning a parser here would override the one your
+`typescript-eslint` version installs. Compose them on top of
+[`typescript-eslint`](https://typescript-eslint.io), which supplies both:
 
 ```js
-{
-  "extends": [
-    "plugin:harmony/recommended"
-  ],
-  "overrides": [
-    {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "extends": [
-        "plugin:harmony/ts-recommended"
-      ]
-    }
-  ]
-}
+import { defineConfig } from 'eslint/config'
+import tseslint from 'typescript-eslint'
+import harmony from 'eslint-plugin-harmony'
+
+export default defineConfig([
+  ...tseslint.configs.recommended,
+  { files: ['**/*.ts', '**/*.tsx'], plugins: { harmony }, extends: ['harmony/ts-recommended'] }
+])
 ```
 
-Note that for `ts-recommended-type-check` you still need to specify `parserOptions.project`.
+For the type-aware configs, also give `typescript-eslint` your
+`languageOptions.parserOptions.project` — harmony does not set it.
+
+For `harmony/ts-prettier`, put `eslint-config-prettier` last so it turns the
+formatting rules off again.
+
+## Legacy: eslintrc (ESLint 8 and 9 only)
+
+> ESLint 10 removed the eslintrc format. `.eslintrc.*` files are not read there
+> at all, and `ESLINT_USE_FLAT_CONFIG=false` no longer brings it back, so
+> `plugin:harmony/*` cannot be used on ESLint 10. Move to the flat configs above.
+
+The `plugin:harmony/*` configs are unchanged from earlier versions:
 
 ```json
 {
-  "extends": [
-    "plugin:harmony/recommended"
-  ],
+  "extends": ["plugin:harmony/recommended"],
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "extends": [
-        "plugin:harmony/ts-recommended-type-check"
-      ],
-      "parserOptions": {
-        "project": "tsconfig.json"
-      }
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:harmony/ts-recommended"]
     }
   ]
 }
 ```
 
-For more information, please check out [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin).
+Available: `plugin:harmony/recommended`, `plugin:harmony/latest`,
+`plugin:harmony/es5`, `plugin:harmony/es5-strict`, `plugin:harmony/ts-prettier`,
+`plugin:harmony/ts-recommended`, `plugin:harmony/ts-recommended-type-check`,
+`plugin:harmony/ts-recommended-cra`, `plugin:harmony/ts-recommended-type-check-cra`.
+
+For `ts-recommended-type-check` you still need to specify
+`parserOptions.project`:
+
+```json
+{
+  "extends": ["plugin:harmony/recommended"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:harmony/ts-recommended-type-check"],
+      "parserOptions": { "project": "tsconfig.json" }
+    }
+  ]
+}
+```
 
 ### JetBrains IDE
 

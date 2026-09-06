@@ -4,9 +4,10 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "lib": [
-      "es2015"
+      "es2022"
     ],
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "newLine": "LF",
     "noUnusedParameters": false,
     "removeComments": false,

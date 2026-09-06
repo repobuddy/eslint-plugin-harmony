@@ -1,5 +1,5 @@
 import { TSESTree, AST_NODE_TYPES, ESLintUtils, type TSESLint } from '@typescript-eslint/experimental-utils'
-import { createRule } from '../utils/createRule'
+import { createRule } from '../utils/createRule.js'
 
 type Delimiter = 'comma' | 'none' | 'semi'
 
@@ -100,7 +100,10 @@ export default createRule<Options, MessageIds>({
     },
   ],
   create(context, [options]) {
-    const sourceCode = context.getSourceCode()
+    // `context.getSourceCode()` was removed in ESLint 10; `context.sourceCode`
+    // has been available since ESLint 8.40.
+    const sourceCode = (context as unknown as { sourceCode?: ReturnType<typeof context.getSourceCode> })
+      .sourceCode ?? context.getSourceCode()
 
     // use the base options as the defaults for the cases
     const baseOptions = options
