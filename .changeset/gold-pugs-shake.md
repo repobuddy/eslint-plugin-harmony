@@ -66,3 +66,16 @@ supports — `require()` of an ESM package returns the module namespace there �
 the plugin object is now `require('eslint-plugin-harmony').default`. On older
 Node it throws `ERR_REQUIRE_ESM`. Prefer an `eslint.config.mjs` with
 `import harmony from 'eslint-plugin-harmony'`.
+
+## Dependencies
+
+- `@typescript-eslint/experimental-utils` (deprecated, v5) is replaced by
+  `@typescript-eslint/utils` v8. It is what the custom rule is built on, and its
+  `eslint` peer range (`^8.57.0 || ^9 || ^10`) matches this package's own — v5's
+  did not. If you import this package's types, the `rules` record is now typed
+  with `TSESLint.RuleModule` from `@typescript-eslint/utils`.
+- `@rushstack/eslint-patch` is dropped. Nothing in this package used it.
+- `@typescript-eslint/eslint-plugin` is now an **optional** peer dependency. Only
+  the `ts-*` configs need it; `harmony/recommended` on plain JavaScript does not.
+  The range is unchanged (`>= 6.0.0`), and the `ts-*` configs are verified
+  against v6 through v8.

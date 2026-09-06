@@ -1,4 +1,4 @@
-import { type TSESLint } from '@typescript-eslint/experimental-utils'
+import { type TSESLint } from '@typescript-eslint/utils'
 import tsMemberDelimiterStyle from './ts-member-delimiter-style.js'
 
 /**

@@ -1,4 +1,5 @@
-import { TSESTree, AST_NODE_TYPES, ESLintUtils, type TSESLint } from '@typescript-eslint/experimental-utils'
+import { TSESTree, AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
+import type { JSONSchema4, JSONSchema4ObjectSchema } from '@typescript-eslint/utils/json-schema'
 import { createRule } from '../utils/createRule.js'
 
 type Delimiter = 'comma' | 'none' | 'semi'
@@ -32,13 +33,13 @@ type MessageIds =
   | 'expectedComma'
   | 'expectedSemi'
 
-const definition = {
+const definition: JSONSchema4ObjectSchema = {
   type: 'object',
   properties: {
     multiline: {
       type: 'object',
       properties: {
-        delimiter: { enum: ['none', 'semi', 'comma'] },
+        delimiter: { type: 'string', enum: ['none', 'semi', 'comma'] },
         requireLast: { type: 'boolean' },
       },
       additionalProperties: false,
@@ -47,11 +48,20 @@ const definition = {
       type: 'object',
       properties: {
         // note can't have "none" for single line delimiter as it's invlaid syntax
-        delimiter: { enum: ['semi', 'comma'] },
+        delimiter: { type: 'string', enum: ['semi', 'comma'] },
         requireLast: { type: 'boolean' },
       },
       additionalProperties: false,
     },
+  },
+  additionalProperties: false,
+}
+
+const overridesDefinition: JSONSchema4 = {
+  type: 'object',
+  properties: {
+    interface: definition,
+    typeLiteral: definition,
   },
   additionalProperties: false,
 }
@@ -62,7 +72,6 @@ export default createRule<Options, MessageIds>({
     type: 'suggestion',
     docs: {
       description: 'Require a specific member delimiter style for interfaces and type literals',
-      recommended: 'error',
     },
     fixable: 'code',
     messages: {
@@ -74,16 +83,10 @@ export default createRule<Options, MessageIds>({
     schema: [
       {
         type: 'object',
-        properties: Object.assign({}, definition.properties, {
-          overrides: {
-            type: 'object',
-            properties: {
-              interface: definition,
-              typeLiteral: definition,
-            },
-            additionalProperties: false,
-          },
-        }),
+        properties: {
+          ...definition.properties,
+          overrides: overridesDefinition,
+        },
         additionalProperties: false,
       },
     ],

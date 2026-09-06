@@ -1,4 +1,4 @@
-import { ESLintUtils, type TSESLint } from '@typescript-eslint/experimental-utils'
+import { ESLintUtils } from '@typescript-eslint/utils'
 import { pkg } from '../pkg.js'
 
 export const createRule = ESLintUtils.RuleCreator(
