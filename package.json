@@ -52,7 +52,6 @@
 		"cs": "changeset"
 	},
 	"dependencies": {
-		"@typescript-eslint/parser": "^8.69.0",
 		"@typescript-eslint/utils": "^8.0.0"
 	},
 	"devDependencies": {
@@ -62,6 +61,7 @@
 		"@types/eslint": "^9.6.1",
 		"@types/node": "24.13.3",
 		"@typescript-eslint/eslint-plugin": "^8.69.0",
+		"@typescript-eslint/parser": "^8.69.0",
 		"eslint": "8.57.1",
 		"eslint-config-prettier": "^10.0.0",
 		"eslint-plugin-harmony": "link:.",
@@ -73,11 +73,15 @@
 	},
 	"peerDependencies": {
 		"@typescript-eslint/eslint-plugin": ">= 6.0.0",
+		"@typescript-eslint/parser": ">= 6.0.0",
 		"eslint": ">=8.57.0",
 		"eslint-config-prettier": ">= 9.0.0"
 	},
 	"peerDependenciesMeta": {
 		"@typescript-eslint/eslint-plugin": {
+			"optional": true
+		},
+		"@typescript-eslint/parser": {
 			"optional": true
 		},
 		"eslint-config-prettier": {

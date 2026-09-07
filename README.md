@@ -41,6 +41,16 @@ here are the principles that they all follow:
 npm install --save-dev eslint eslint-plugin-harmony
 ```
 
+The `ts-*` configs need a TypeScript parser and plugin, which this package does
+not bundle — install them yourself:
+
+```sh
+npm install --save-dev typescript-eslint                                  # flat config
+npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin   # eslintrc
+```
+
+`eslint-config-prettier` is likewise yours to install if you use `ts-prettier`.
+
 ## Usage
 
 `eslint.config.js` (flat config) is the supported way to use this package on every
@@ -149,6 +159,10 @@ The `plugin:harmony/*` configs are unchanged from earlier versions:
   ]
 }
 ```
+
+The eslintrc `ts-*` configs name `@typescript-eslint/parser` as their parser and
+eslintrc resolves it from *your* `node_modules`, so install it yourself — this
+package no longer ships a copy.
 
 Available: `plugin:harmony/recommended`, `plugin:harmony/latest`,
 `plugin:harmony/es5`, `plugin:harmony/es5-strict`, `plugin:harmony/ts-prettier`,
