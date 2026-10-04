@@ -4,6 +4,11 @@
   "platformAutomerge": true,
   "packageRules": [
     {
+      "description": "typescript-eslint does not support TypeScript 7 yet (plugin load fails); lift when it does.",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<7"
+    },
+    {
       "description": "The packageManager pin is toolchain, so non-major updates merge themselves.",
       "matchDepTypes": ["packageManager"],
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
