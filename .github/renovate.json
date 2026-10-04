@@ -4,6 +4,18 @@
   "platformAutomerge": true,
   "packageRules": [
     {
+      "description": "The packageManager pin is toolchain, so non-major updates merge themselves.",
+      "matchDepTypes": ["packageManager"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "The toolchain pins (mise, nvm) move with packageManager, so they merge themselves too.",
+      "matchManagers": ["mise", "nvm"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
       "description": "Repo-internal tooling merges itself through the queue; majors stay manual.",
       "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
