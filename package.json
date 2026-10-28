@@ -1,6 +1,6 @@
 {
 	"name": "eslint-plugin-harmony",
-	"version": "8.0.0",
+	"version": "9.0.0",
 	"description": "eslint config that works in harmony with different IDEs",
 	"keywords": [
 		"eslint",
