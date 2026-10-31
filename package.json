@@ -34,7 +34,8 @@
 	},
 	"files": [
 		"lib",
-		"ide-configs"
+		"ide-configs",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"build": "tsc -p tsconfig.lib.json",
