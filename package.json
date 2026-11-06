@@ -89,7 +89,7 @@
 			"optional": true
 		}
 	},
-	"packageManager": "pnpm@12.15.0",
+	"packageManager": "pnpm@12.17.0",
 	"engines": {
 		"node": "^20.19.0 || ^22.13.0 || >=24"
 	}
