@@ -63,7 +63,7 @@
 		"@types/node": "24.19.2",
 		"@typescript-eslint/eslint-plugin": "^8.69.0",
 		"@typescript-eslint/parser": "^8.69.0",
-		"eslint": "8.57.1",
+		"eslint": "10.14.0",
 		"eslint-config-prettier": "^10.0.0",
 		"eslint-plugin-harmony": "link:.",
 		"husky": "9.1.7",
