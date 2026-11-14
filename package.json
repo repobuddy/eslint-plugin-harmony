@@ -67,7 +67,7 @@
 		"eslint-config-prettier": "^10.0.0",
 		"eslint-plugin-harmony": "link:.",
 		"husky": "9.1.7",
-		"prettier": "3.9.10",
+		"prettier": "3.10.0",
 		"rimraf": "6.1.4",
 		"typescript": "5.9.3",
 		"vitest": "5.1.0"
