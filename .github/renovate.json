@@ -25,11 +25,6 @@
       "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["patch", "minor", "pin", "digest"],
       "automerge": true
-    },
-    {
-      "description": "The published surface (dependencies/peerDependencies) is a release decision, not a bot's.",
-      "matchDepTypes": ["dependencies", "peerDependencies"],
-      "automerge": false
     }
   ],
   "lockFileMaintenance": { "enabled": true, "automerge": true }
